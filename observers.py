@@ -13,12 +13,9 @@ class Observer:
 
 
 class StateStore(Observer):
-    """Guarda os ultimos N resultados por URL."""
-
     def __init__(self, history_size: int) -> None:
         self.history_size = history_size
         self._history: dict[str, deque[CheckResult]] = {}
-        # workers escrevem em varias threads, o front le no event loop
         self._lock = threading.Lock()
 
     def update(self, result: CheckResult) -> None:
@@ -44,8 +41,6 @@ class StateStore(Observer):
 
 
 class AlertLogger(Observer):
-    """Loga apenas a transicao ok -> falha (e a recuperacao)."""
-
     def __init__(self) -> None:
         self._last_ok: dict[str, bool] = {}
 

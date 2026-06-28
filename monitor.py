@@ -15,8 +15,6 @@ class CheckResult:
 
 
 class Monitor:
-    """Subject do padrao Observer: faz fan-out de cada resultado."""
-
     def __init__(self) -> None:
         self._observers = []
 
@@ -29,8 +27,6 @@ class Monitor:
 
 
 class Supervisor:
-    """Mantem uma thread por URL, cada uma em loop: check -> notify -> sleep."""
-
     def __init__(self, monitor: Monitor, interval: float, timeout: float) -> None:
         self.monitor = monitor
         self.interval = interval
@@ -64,10 +60,9 @@ class Supervisor:
             return list(self._workers)
 
     def _run(self, url: str, stop: threading.Event) -> None:
-        # import local para evitar ciclo (checker importa CheckResult daqui)
         from checker import check
 
         while not stop.is_set():
             result = check(url, timeout=self.timeout)
             self.monitor.notify(result)
-            stop.wait(self.interval)  # acorda na hora se a URL for removida
+            stop.wait(self.interval)
